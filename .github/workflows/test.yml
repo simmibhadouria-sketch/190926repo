@@ -1,0 +1,51 @@
+name: Terraform Feature Pipeline
+
+on:
+  push:
+    branches:
+      - features/newrg
+
+  pull_request:
+    branches:
+      - features/newrg
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Checkout
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Azure Login using Client ID + Client Secret
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: c21352a5-734d-4c97-9fe7-d0eb96876757
+          tenant-id: 550c077a-49e3-4a1e-8c5d-4b7a327b8240
+          subscription-id: 9b1848cc-ec7e-409d-862b-1c4636d199d1
+          client-secret: 1q48Q~6uIVxXsP-xqpyG9tthuwjd34TAgRD-dcNX
+
+      # 3. Check Azure Login
+      - name: Check Azure Account
+        run: az account show
+
+      # 4. Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      # 5. Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # 6. Terraform Validate
+      - name: Terraform Validate
+        run: terraform validate
+
+      # 7. Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan
